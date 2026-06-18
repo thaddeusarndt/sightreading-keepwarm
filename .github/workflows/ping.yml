@@ -1,0 +1,20 @@
+name: keep-warm
+
+# Pings the sight-reading app so Render's free tier never cold-starts.
+# Runs ~every 10 min. GitHub cron is best-effort (may drift a few minutes),
+# which is fine since Render only sleeps after 15 min idle.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        run: |
+          url="https://sightreading-generator.onrender.com/api/health"
+          echo "pinging $url"
+          code=$(curl -fsS -m 60 -o /dev/null -w "%{http_code}" "$url" || echo "FAIL")
+          echo "result: $code"
