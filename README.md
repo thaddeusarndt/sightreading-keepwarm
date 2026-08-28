@@ -24,6 +24,19 @@ A run fails only after **three consecutive** bad responses (~8 minutes), which
 means a "Run failed" e-mail is a real outage rather than a blip. The previous
 version swallowed every curl error and always reported success.
 
+## Why it only runs during the day
+
+Render's free tier gives the whole workspace **750 instance hours a month** and
+bills time the service is *awake*, not traffic. Keeping it warm around the clock
+costs ~744 hours in a 31-day month — which is under the cap, but by six hours,
+with no room for a redeploy or a second service. On 2026-08-27 that produced a
+"637 of 750" warning e-mail and a real risk of suspension.
+
+So the schedule runs 6am–midnight Pacific (`13:00–07:00` UTC) instead of 24/7:
+roughly 19 awake hours a day once the last run's tail is counted, or **~589
+hours a month**. The only cost is one cold start for the first visitor after a
+quiet night. Cron is fixed UTC, so the window slides to 5am–11pm once DST ends.
+
 ## Notes
 
 - Occasional `The job was not acquired by Runner of type hosted` failures are

@@ -10,7 +10,19 @@ name: keep-warm
 # gives us. Overlapping runs are harmless (public repo, minutes are free).
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    # Render's free tier gives the whole workspace 750 instance hours a month,
+    # and it bills time the service is AWAKE, not traffic -- so pinging around
+    # the clock burns ~744 hours in a 31-day month and leaves no margin at all.
+    # (That is exactly how we ended up at 637/750 on 2026-08-27.)
+    #
+    # Nobody sight-reads at 4am, so the loop only runs 6am-midnight Pacific
+    # (13:00-07:00 UTC). That is ~19 awake hours a day including the tail of
+    # the last run, or ~589 hours a month -- a comfortable margin. The only
+    # cost is one cold start for the first visitor after a quiet night.
+    #
+    # Cron is fixed UTC, so this slides to 5am-11pm Pacific once DST ends.
+    - cron: "*/10 13-23 * * *"
+    - cron: "*/10 0-6 * * *"
   workflow_dispatch: {}
 
 jobs:
