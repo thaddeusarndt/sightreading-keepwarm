@@ -1,5 +1,11 @@
 # sightreading-keepwarm
 
+> **Retired 2026-10-03.** Notespawn moved off Render to the Hetzner box on
+> 2026-08-28 (`deploy-hetzner.sh` in the `sightreading` repo), the old
+> `sightreading.thaddeusarndt.com` address followed on 2026-10-03, and the
+> Render service is now suspended. The keep-warm workflow is disabled. Nothing
+> here needs to run; re-enable it only if Render is ever resumed as the host.
+
 A tiny scheduled GitHub Action that pings
 [Notespawn](https://notespawn.com) (Render service `sightreading-generator`) so
 the free tier never cold-starts. No secrets, no code — just `curl` to the public
@@ -44,6 +50,7 @@ quiet night. Cron is fixed UTC, so the window slides to 5am–11pm once DST ends
 - The permanent fix is Render's **Starter** plan (~$7/mo, always on), which
   would make this repo unnecessary. See `plan: free` in `render.yaml` over in
   the `sightreading` repo.
-- To pause: disable the **keep-warm** workflow in the Actions tab.
+- To pause: disable the **keep-warm** workflow in the Actions tab
+  (`gh workflow enable keep-warm -R thaddeusarndt/sightreading-keepwarm` undoes it).
 - GitHub disables scheduled workflows after 60 days with no repo activity —
   push any commit (or run the workflow manually) to re-enable.
